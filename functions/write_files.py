@@ -1,5 +1,6 @@
 import os
 from functions.shared_utils import is_dir_inside_dir
+from google.genai import types
 
 
 def write_file(working_directory, file_path, content):
@@ -16,5 +17,16 @@ def write_file(working_directory, file_path, content):
     return f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
 
 
-# If the file_path is outside the working_directory, return a string with an error:
-# f'Error: Cannot write to "{file_path}" as it is outside the permitted working directory'
+schema_write_file = types.FunctionDeclaration(
+    name="write_file",
+    description="Write content to file at file path",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file": types.Schema(
+                type=types.Type.STRING,
+                description="The file to write to, relative to the working directory.",
+            ),
+        },
+    ),
+)

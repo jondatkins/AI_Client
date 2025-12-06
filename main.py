@@ -3,6 +3,9 @@ import sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from prompts import system_prompt
+from constants import model_name
+from call_function import available_functions
 
 
 def main():
@@ -14,7 +17,7 @@ def main():
         is_verbose = True
     user_prompt = sys.argv[1]
     response = get_response(user_prompt)
-    print_info(user_prompt, response, is_verbose)
+    # print_info(user_prompt, response, is_verbose)
 
 
 def get_response(user_prompt):
@@ -26,17 +29,18 @@ def get_response(user_prompt):
     messages = [
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
-
+    # config=types.GenerateContentConfig(
+    #     tools=[available_functions], system_instruction=system_prompt
+    # )
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model=model_name,
         contents=messages,
+        config=types.GenerateContentConfig(
+            tools=[available_functions], system_instruction=system_prompt
+        ),
     )
 
     return response
-
-
-# def print_response(response):
-#     print(response.text)
 
 
 def print_info(user_prompt, response, verbose):
@@ -47,7 +51,14 @@ def print_info(user_prompt, response, verbose):
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
     print("Response:")
-    print(response.text)
+    if response.function_calls is not None:
+        for function_call_part in response.function_calls:
+            print(
+                f"Calling function: {function_call_part.name}({function_call_part.args})"
+            )
+
+    else:
+        print(response.text)
 
 
 if __name__ == "__main__":

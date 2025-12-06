@@ -1,4 +1,5 @@
 import os
+from google.genai import types
 from functions.shared_utils import is_dir_inside_dir
 
 
@@ -33,13 +34,18 @@ def get_files_info(working_directory, directory="."):
     return dir_contents
 
 
-# def is_dir_inside_dir(working_directory, container_dir):
-#     working_directory = os.path.abspath(working_directory)
-#     if not os.path.isdir(working_directory):
-#         return False
-#     if container_dir in working_directory:
-#         return True
-#     return False
-#
+schema_get_files_info = types.FunctionDeclaration(
+    name="get_files_info",
+    description="Lists files in the specified directory along with their sizes, constrained to the working directory.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "directory": types.Schema(
+                type=types.Type.STRING,
+                description="The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
+            ),
+        },
+    ),
+)
 
 main()
