@@ -15,7 +15,7 @@ available_functions = types.Tool(
 )
 
 function_map = {
-    "get_file_info": get_files_info,
+    "get_files_info": get_files_info,
     "run_python_file": run_python_file,
     "get_file_content": get_file_content,
     "write_file": write_file,
@@ -42,7 +42,6 @@ def call_function(function_call_part, verbose=False):
             ],
         )
     function_result = func(**function_args)
-    # print(function_result)
     return types.Content(
         role="tool",
         parts=[

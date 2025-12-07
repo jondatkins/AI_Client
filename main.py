@@ -48,14 +48,6 @@ def generate_content(client, messages, verbose):
         print(response.text)
         return
 
-    # Back where you handle the response from the model (i.e., generate_content), instead of simply printing the name of the function the LLM decides to call, use call_function.
-    #
-    #     The types.Content that we return from call_function should have a .parts[0].function_response.response within.
-    #     If it doesn't, raise a fatal exception of some sort.
-    #     If it does, append the function call's response (.parts[0]) to a list – we'll use this later.
-    #     If verbose was set, print the result of the function call like this:
-
-    # print(f"-> {function_call_result.parts[0].function_response.response}")
     for function_call_part in response.function_calls:
         print(f"Calling function: {function_call_part.name}({function_call_part.args})")
         function_call_result = call_function(function_call_part)
