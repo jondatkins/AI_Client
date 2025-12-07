@@ -48,23 +48,25 @@ def generate_content(client, messages, verbose):
         print(response.text)
         return
 
+    for response_variation in response.candidates:
+        print(f"Response Variation: {response_variation.content}")
+        messages.append(response_variation.content)
+
+    function_responses = []
+
     for function_call_part in response.function_calls:
-        print(f"Calling function: {function_call_part.name}({function_call_part.args})")
-        function_call_result = call_function(function_call_part)
+        function_call_result = call_function(function_call_part, verbose)
         if (
-            not function_call_result
-            or not function_call_result.parts
-            or not hasattr(function_call_result.parts[0], "function_response")
+            not function_call_result.parts
             or not function_call_result.parts[0].function_response
-            or not function_call_result.parts[0].function_response.response
         ):
-            raise Exception("Fatal Error Occurred")
-        func_call_list.append(function_call_result.parts[0])
+            raise Exception("empty function call result")
         if verbose:
             print(f"-> {function_call_result.parts[0].function_response.response}")
+        function_responses.append(function_call_result.parts[0])
 
-
-func_call_list = []
+    if not function_responses:
+        raise Exception("no function responses generated, exiting.")
 
 
 if __name__ == "__main__":
