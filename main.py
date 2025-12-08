@@ -39,7 +39,6 @@ def call_fake_ai():
     client = FakeClient()
     if args.verbose:
         print(f"User prompt: {args.user_prompt}\n")
-    # call_generate_content(client, messages, args.verbose)
     call_generate_content(client, messages, False)
 
 
@@ -98,7 +97,6 @@ def generate_content(client, messages, verbose):
         return response.text
 
     function_responses = []
-
     for function_call_part in response.function_calls:
         function_call_result = call_function(function_call_part, verbose)
         if (
@@ -115,7 +113,7 @@ def generate_content(client, messages, verbose):
 
     messages.append(types.Content(role="user", parts=function_responses))
 
-    return response
+    # return response
 
 
 if __name__ == "__main__":
